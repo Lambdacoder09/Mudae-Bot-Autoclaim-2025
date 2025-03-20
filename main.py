@@ -41,11 +41,16 @@ async def run_bots_sequentially(tokens):
         await asyncio.sleep(10)   # Short delay before starting the next bot
 
 if __name__ == "__main__":
-    tokens = [
-       "TOKEN1",
-      "TOKEN2"
-      #AND SO ON 
-
-    ]
-    asyncio.run(run_bots_sequentially(tokens))
-
+    # Load tokens from JSON file
+    try:
+        with open("tokens.json", "r") as file:
+            data = json.load(file)
+            tokens = data.get("tokens", [])
+            if not tokens:
+                print("No tokens found in tokens.json.")
+            else:
+                asyncio.run(run_bots_sequentially(tokens))
+    except FileNotFoundError:
+        print("tokens.json file not found.")
+    except json.JSONDecodeError:
+        print("Error decoding tokens.json. Please ensure it's properly formatted.")
